@@ -32,6 +32,7 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.ViewProps;
 import com.facebook.react.uimanager.events.EventDispatcher;
+import com.facebook.react.views.view.ReactViewGroup;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -538,7 +539,14 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
       annotation.setVisibility(INVISIBLE);
 
       // Add to the parent group
-      attacherGroup.addView(annotation);
+      if (annotation.getParent() != attacherGroup) {
+        ReactViewGroup annotationParent = (ReactViewGroup)annotation.getParent();
+        if (annotationParent != null) {
+          annotationParent.removeView(annotation);
+        }
+
+        attacherGroup.addView(annotation);
+      }
 
       // Trigger visibility event if necessary.
       // With some testing, seems like it is not always

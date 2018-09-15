@@ -286,7 +286,11 @@ public class AirMapMarker extends AirMapFeature {
       hasViewChanges = false;
     }
 
-    marker.setIcon(getIcon());
+    if (marker != null) {
+      marker.setVisible(false);
+      marker.setIcon(getIcon());
+      marker.setVisible(true);
+    }
   }
 
   public LatLng interpolate(float fraction, LatLng a, LatLng b) {
@@ -478,19 +482,7 @@ public class AirMapMarker extends AirMapFeature {
     int width = this.width <= 0 ? 100 : this.width;
     int height = this.height <= 0 ? 100 : this.height;
     this.buildDrawingCache();
-
-    // Do not create the doublebuffer-bitmap each time. reuse it to save memory.
-    Bitmap bitmap = mLastBitmapCreated;
-
-    if (bitmap == null ||
-            bitmap.isRecycled() ||
-            bitmap.getWidth() != width ||
-            bitmap.getHeight() != height) {
-      bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-      mLastBitmapCreated = bitmap;
-    } else {
-      bitmap.eraseColor(Color.TRANSPARENT);
-    }
+    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
     Canvas canvas = new Canvas(bitmap);
     this.draw(canvas);
